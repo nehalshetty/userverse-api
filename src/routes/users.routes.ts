@@ -64,6 +64,11 @@ router.get("/:id", authenticate, async (ctx) => {
 /**
  * PATCH /users/:id
  * Update user's userName and/or gitUserName (requires authentication)
+ * Todo:
+ * 1. Add rate limiting to prevent abuse of GitHub API calls, especially for the GitHub username updates.
+ * 2. Implement caching for GitHub repo insights to reduce API calls and improve performance.
+ * 3. Add validation for GitHub username format (e.g., check if it exists on GitHub).
+ *
  */
 router.patch("/:id", authenticate, async (ctx) => {
   try {
