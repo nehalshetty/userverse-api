@@ -1,6 +1,7 @@
 import Router from "koa-router";
 import { UsersService } from "../services/users/users.class";
 import { success, error } from "../helpers/response";
+import { authenticate } from "../helpers/auth-middleware";
 
 const router = new Router({
   prefix: "/users",
@@ -11,7 +12,7 @@ const usersService = new UsersService();
 
 /**
  * GET /users
- * Get all users
+ * Get all users (requires authentication)
  */
 router.get("/", async (ctx) => {
   try {
@@ -30,10 +31,16 @@ router.get("/", async (ctx) => {
 
 /**
  * GET /users/:id
- * Get a user by ID
+ * Get a user by ID (requires authentication)
  */
-router.get("/:id", async (ctx) => {
+router.get("/:id", authenticate, async (ctx) => {
   try {
+    // Ensure users can only access their own data
+    if (ctx.params.id !== ctx.state.userId) {
+      error(ctx, "Forbidden", 403);
+      return;
+    }
+
     const user = await usersService.findById(ctx.params.id);
     if (!user) {
       error(ctx, "User not found", 404);
