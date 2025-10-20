@@ -59,10 +59,10 @@ export class AuthService {
     }
 
     const existingUserByUsername = await this.usersService.findByUsername(
-      data.username
+      data.userName
     );
     if (existingUserByUsername) {
-      throw new Error("User with this username already exists");
+      throw new Error("User with this userName already exists");
     }
 
     // Create user
@@ -75,7 +75,7 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        username: user.username,
+        userName: user.userName,
       },
       token: session.token,
       expiresAt: session.expiresAt,
@@ -114,7 +114,7 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        username: user.username,
+        userName: user.userName,
       },
       token: session.token,
       expiresAt: session.expiresAt,

@@ -5,7 +5,7 @@ import { Type, Static } from "@sinclair/typebox";
  */
 export const RegisterSchema = Type.Object({
   email: Type.String({ format: "email" }),
-  username: Type.String({ minLength: 3, maxLength: 50 }),
+  userName: Type.String({ minLength: 3, maxLength: 50 }),
   password: Type.String({ minLength: 6 }),
 });
 
@@ -28,7 +28,7 @@ export const AuthResponseSchema = Type.Object({
   user: Type.Object({
     id: Type.String(),
     email: Type.String(),
-    username: Type.String(),
+    userName: Type.String(),
   }),
   token: Type.String(),
   expiresAt: Type.String({ format: "date-time" }),

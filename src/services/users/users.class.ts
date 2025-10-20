@@ -54,10 +54,10 @@ export class UsersService {
   }
 
   /**
-   * Find a user by username
+   * Find a user by userName
    */
-  async findByUsername(username: string): Promise<User | undefined> {
-    return database.users.findOne((user: any) => user.username === username) as
+  async findByUsername(userName: string): Promise<User | undefined> {
+    return database.users.findOne((user: any) => user.userName === userName) as
       | User
       | undefined;
   }

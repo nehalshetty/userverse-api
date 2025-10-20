@@ -1,13 +1,27 @@
 import { Type, Static } from "@sinclair/typebox";
 
 /**
+ * Repository insight schema
+ */
+export const RepoInsightSchema = Type.Object({
+  id: Type.Number(),
+  name: Type.String(),
+  full_name: Type.String(),
+  description: Type.Union([Type.String(), Type.Null()]),
+});
+
+export type RepoInsight = Static<typeof RepoInsightSchema>;
+
+/**
  * User schema
  */
 export const UserSchema = Type.Object({
   id: Type.String(),
   email: Type.String({ format: "email" }),
-  username: Type.String({ minLength: 3, maxLength: 50 }),
+  userName: Type.String({ minLength: 3, maxLength: 50 }),
   password: Type.String(), // In production, this would be hashed
+  gitUserName: Type.Optional(Type.String()),
+  repoInsights: Type.Optional(Type.Array(RepoInsightSchema)),
   createdAt: Type.String({ format: "date-time" }),
   updatedAt: Type.String({ format: "date-time" }),
 });
@@ -19,7 +33,7 @@ export type User = Static<typeof UserSchema>;
  */
 export const CreateUserSchema = Type.Object({
   email: Type.String({ format: "email" }),
-  username: Type.String({ minLength: 3, maxLength: 50 }),
+  userName: Type.String({ minLength: 3, maxLength: 50 }),
   password: Type.String({ minLength: 6 }),
 });
 
@@ -31,12 +45,24 @@ export type CreateUser = Static<typeof CreateUserSchema>;
 export const UpdateUserSchema = Type.Partial(
   Type.Object({
     email: Type.String({ format: "email" }),
-    username: Type.String({ minLength: 3, maxLength: 50 }),
+    userName: Type.String({ minLength: 3, maxLength: 50 }),
     password: Type.String({ minLength: 6 }),
+    gitUserName: Type.String(),
+    repoInsights: Type.Array(RepoInsightSchema),
   })
 );
 
 export type UpdateUser = Static<typeof UpdateUserSchema>;
+
+/**
+ * Patch user schema - for PATCH endpoint (userName and gitUserName only)
+ */
+export const PatchUserSchema = Type.Object({
+  userName: Type.Optional(Type.String({ minLength: 3, maxLength: 50 })),
+  gitUserName: Type.Optional(Type.String()),
+});
+
+export type PatchUser = Static<typeof PatchUserSchema>;
 
 /**
  * Login schema
