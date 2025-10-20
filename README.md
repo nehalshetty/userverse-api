@@ -1,14 +1,16 @@
 # Userverse API
 
-A basic Node.js API built with Koa, Knex.js, TypeBox, and TypeScript.
+A Node.js API built with Koa, TypeBox, and TypeScript featuring authentication and GitHub integration.
 
 ## Features
 
 - 🚀 **Koa** - Modern web framework for Node.js
 - 📦 **TypeScript** - Type-safe development
-- ✅ **TypeBox** - JSON Schema validation
+- ✅ **TypeBox** - JSON Schema validation with custom format validators
 - 🗄️ **In-Memory Store** - Mock database using Map
-- 🔐 **Dummy Auth** - Basic authentication flow with login/register
+- 🔐 **Authentication** - Token-based auth with session management
+- 🔒 **Authorization** - Protected routes with Bearer token validation
+- 🐙 **GitHub Integration** - Automatic repository fetching
 - 📂 **Service Architecture** - Clean service structure with hooks
 
 ## Project Structure
@@ -31,8 +33,10 @@ src/
 │   ├── in-memory-store.ts    # In-memory data store
 │   └── database.ts           # Database instance
 ├── helpers/
-│   ├── validator.ts          # TypeBox validation helper
-│   └── response.ts           # Response helpers
+│   ├── validator.ts          # TypeBox validation helper (with format validators)
+│   ├── response.ts           # Response helpers
+│   ├── auth-middleware.ts    # Authentication middleware
+│   └── github.ts             # GitHub API integration
 └── index.ts                  # Application entry point
 ```
 
@@ -64,35 +68,52 @@ npm start
 
 ### Health Check
 
-- `GET /health` - Check API status
+- `GET /health` - API health status
 
-### Authentication
+### Authentication (Public)
 
-- `POST /auth/register` - Register a new user
+- `POST /auth/register` - Register new user (returns token)
+- `POST /auth/login` - Login user (returns token)
+- `POST /auth/logout` - Logout user (requires auth)
 
-  ```json
-  {
-    "email": "user@example.com",
-    "username": "johndoe",
-    "password": "password123"
-  }
-  ```
-
-- `POST /auth/login` - Login a user
-
-  ```json
-  {
-    "email": "user@example.com",
-    "password": "password123"
-  }
-  ```
-
-- `POST /auth/logout` - Logout a user (requires Bearer token)
-
-### Users
+### Users (Protected - Requires Bearer Token)
 
 - `GET /users` - Get all users
-- `GET /users/:id` - Get user by ID
+- `GET /users/:id` - Get user by ID (own profile only)
+- `PATCH /users/:id` - Update username and/or GitHub username (own profile only)
+  - Updates `username` (optional)
+  - Updates `gitUserName` (optional) - auto-fetches GitHub repos
+  - Stores repos in `repoInsights` array with: id, name, full_name, description
+
+## User Schema
+
+```typescript
+{
+  id: string;
+  email: string;
+  username: string;
+  password: string;
+  gitUserName?: string;          // GitHub username
+  repoInsights?: Array<{         // Auto-populated from GitHub API
+    id: number;
+    name: string;
+    full_name: string;
+    description: string | null;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+## Authentication
+
+All protected endpoints require Bearer token in Authorization header:
+
+```bash
+Authorization: Bearer <token>
+```
+
+Get token from `/auth/register` or `/auth/login` response.
 
 ## Service Architecture
 
@@ -125,11 +146,30 @@ const usersService = new UsersService(customHooks);
 
 The app uses a simple Map-based in-memory store to mock a database. Data is stored in memory and will be lost when the server restarts.
 
+## Quick Start Examples
+
+Register and update profile with GitHub:
+
+```bash
+# 1. Register
+curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","username":"myuser","password":"pass123"}'
+
+# 2. Update with GitHub username (auto-fetches repos)
+curl -X PATCH http://localhost:3000/users/1 \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"gitUserName":"octocat"}'
+```
+
+See [EXAMPLES.md](./EXAMPLES.md) for detailed API usage.
+
 ## Notes
 
-⚠️ **This is a development/demo setup:**
+⚠️ **Development/Demo Setup:**
 
-- Passwords are stored in plain text (use proper hashing in production)
-- Tokens are random strings (use JWT in production)
-- Data is stored in memory (use a real database in production)
-- No input sanitization (add proper validation in production)
+- Passwords stored in plain text (hash in production)
+- Simple token-based auth (use JWT in production)
+- In-memory storage (data lost on restart)
+- GitHub API rate limits apply (60 requests/hour unauthenticated)
