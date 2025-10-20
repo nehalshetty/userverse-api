@@ -1,6 +1,7 @@
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import Router from "koa-router";
+import cors from "@koa/cors";
 
 // Import routes
 import authRoutes from "./routes/auth.routes";
@@ -8,6 +9,16 @@ import usersRoutes from "./routes/users.routes";
 
 const app = new Koa();
 const router = new Router();
+
+// CORS middleware - Allow requests from localhost:4000
+app.use(
+  cors({
+    origin: "http://localhost:4000", // Allow your frontend
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
 // Middleware
 app.use(bodyParser());

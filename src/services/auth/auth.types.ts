@@ -29,6 +29,8 @@ export const AuthResponseSchema = Type.Object({
     id: Type.String(),
     email: Type.String(),
     userName: Type.String(),
+    gitUserName: Type.Optional(Type.String()),
+    repoInsights: Type.Optional(Type.Array(Type.Any())),
   }),
   token: Type.String(),
   expiresAt: Type.String({ format: "date-time" }),
