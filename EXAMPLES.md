@@ -25,6 +25,7 @@ curl http://localhost:3000/health
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -52,6 +53,7 @@ curl -X POST http://localhost:3000/auth/register \
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -83,6 +85,7 @@ curl -X POST http://localhost:3000/auth/login \
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -108,6 +111,7 @@ curl -X POST http://localhost:3000/auth/logout \
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -131,6 +135,7 @@ curl http://localhost:3000/users \
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -158,6 +163,7 @@ curl http://localhost:3000/users/1 \
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -172,6 +178,7 @@ Response:
 ```
 
 **Error (trying to access another user's profile):**
+
 ```json
 {
   "success": false,
@@ -252,6 +259,7 @@ curl -X PATCH http://localhost:3000/users/1 \
 **Error Responses:**
 
 Username already taken:
+
 ```json
 {
   "success": false,
@@ -260,6 +268,7 @@ Username already taken:
 ```
 
 GitHub user not found:
+
 ```json
 {
   "success": false,
@@ -272,6 +281,7 @@ GitHub user not found:
 ## Common Error Responses
 
 ### Authentication Required (401)
+
 ```json
 {
   "success": false,
@@ -280,6 +290,7 @@ GitHub user not found:
 ```
 
 ### Invalid/Expired Token (401)
+
 ```json
 {
   "success": false,
@@ -288,6 +299,7 @@ GitHub user not found:
 ```
 
 ### Forbidden - Wrong User (403)
+
 ```json
 {
   "success": false,
@@ -296,6 +308,7 @@ GitHub user not found:
 ```
 
 ### Validation Error (400)
+
 ```json
 {
   "success": false,
