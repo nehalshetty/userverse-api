@@ -1,5 +1,16 @@
-import { TSchema } from "@sinclair/typebox";
+import { TSchema, FormatRegistry } from "@sinclair/typebox";
 import { Value } from "@sinclair/typebox/value";
+
+// Register custom format validators
+FormatRegistry.Set("email", (value) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(value);
+});
+
+FormatRegistry.Set("date-time", (value) => {
+  const date = new Date(value);
+  return !isNaN(date.getTime());
+});
 
 /**
  * Validate data against a TypeBox schema
